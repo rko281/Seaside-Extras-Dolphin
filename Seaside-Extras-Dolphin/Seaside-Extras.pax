@@ -1,0 +1,131 @@
+﻿| package |
+package := Package name: 'Seaside-Extras'.
+package paxVersion: 1;
+	basicComment: ''.
+
+package methodNames
+	add: #Symbol -> #asHtmlTagId;
+	add: #Symbol -> #writeAsHtmlTagIdOn:;
+	add: #WAConcatenatedHtmlAttributeValue -> #includes:;
+	add: #WARequestContext -> #noResponse;
+	add: #WATagBrush -> #includesClass:;
+	add: #WATagBrush -> #textCenter;
+	add: #WATagBrush -> #textEnd;
+	add: #WATagBrush -> #textStart;
+	add: #WAUrl -> #_queryFields;
+	yourself.
+
+package binaryGlobalNames: (Set new
+	yourself).
+
+package globalAliases: (Set new
+	yourself).
+
+package setPrerequisites: #(
+	'..\Core\Object Arts\Dolphin\Base\Dolphin'
+	'..\Seaside\Seaside\Seaside-Canvas'
+	'..\Seaside\Seaside\Seaside-Core').
+
+package!
+
+"Loose Methods"!
+
+!Symbol methodsFor!
+
+asHtmlTagId
+
+	"e.g. #oneThingOrAnother -> 'one-thing-or-another'"
+
+	| out |
+
+	out := (String new: self size + 4) writeStream.
+
+	self writeAsHtmlTagIdOn: out.
+
+	^out contents!
+
+writeAsHtmlTagIdOn: aStream
+
+	"e.g. #oneThingOrAnother -> 'one-thing-or-another'"
+
+	| in first |
+
+	in := self readStream.
+	first:= true.
+	[in atEnd] whileFalse: 
+		[| next |
+		next := in next.
+		first ifTrue: 
+			[ aStream nextPut: next asLowercase.
+			first := false ]
+		ifFalse: 
+			[next isUppercase
+				ifTrue: [aStream nextPut: $-; nextPut: next asLowercase]
+				ifFalse: [aStream nextPut: next]]]! !
+
+!Symbol categoriesForMethods!
+asHtmlTagId!converting!public! !
+writeAsHtmlTagIdOn:!converting!public! !
+!
+
+!WAConcatenatedHtmlAttributeValue methodsFor!
+
+includes: anObject
+
+	^values includes: anObject! !
+
+!WAConcatenatedHtmlAttributeValue categoriesForMethods!
+includes:!initialization!public! !
+!
+
+!WARequestContext methodsFor!
+
+noResponse
+	self response status: WAResponse statusNoContent.	self respond! !
+
+!WARequestContext categoriesForMethods!
+noResponse!actions!public! !
+!
+
+!WATagBrush methodsFor!
+
+includesClass: aString
+
+	^(self attributeAt: 'class' ifAbsent: [nil])
+	ifNil: 
+		[false]
+	ifNotNil:
+		[ :value | 
+		value isConcatenatedHtmlAttributeValue
+			ifTrue: [value includes: aString]
+			ifFalse: [value = aString]]!
+
+textCenter
+
+	self class: 'text-center'!
+
+textEnd
+
+	self class: 'text-end'!
+
+textStart
+
+	self class: 'text-start'! !
+
+!WATagBrush categoriesForMethods!
+includesClass:!public!testing! !
+textCenter!*Bootstrap5/Core!public! !
+textEnd!*Bootstrap5/Core!public! !
+textStart!*Bootstrap5/Core!public! !
+!
+
+!WAUrl methodsFor!
+
+_queryFields		^ queryFields ! !
+
+!WAUrl categoriesForMethods!
+_queryFields!accessing!public! !
+!
+
+"End of package definition"!
+

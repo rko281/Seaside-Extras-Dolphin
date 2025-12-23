@@ -1,0 +1,138 @@
+﻿| package |
+package := Package name: 'Javascript-Extras'.
+package paxVersion: 1;
+	basicComment: ''.
+
+package classNames
+	add: #JSNamedFunction;
+	yourself.
+
+package methodNames
+	add: #JSFunction -> #addExpression:;
+	add: #JSFunction -> #named:;
+	add: #JSFunction -> #returnExpression:;
+	add: #JSFunction -> #returnStatement:;
+	add: #JSScript -> #fetch:then:values:method:;
+	add: #JSScript -> #fetchCallback:then:values:method:;
+	add: #JSScript -> #fetchCallback:value:method:;
+	add: #JSScript -> #fetchCallback:values:method:;
+	add: 'JSFunction class' -> #named:;
+	add: 'JSFunction class' -> #named:arguments:;
+	yourself.
+
+package binaryGlobalNames: (Set new
+	yourself).
+
+package globalAliases: (Set new
+	yourself).
+
+package setPrerequisites: #(
+	'..\Core\Object Arts\Dolphin\Base\Dolphin'
+	'..\Seaside\Javascript\Javascript-Core'
+	'..\Seaside\Seaside\Seaside-Core'
+	'Seaside-Extras').
+
+package setManualPrerequisites: #(
+	'Seaside-Extras').
+
+package!
+
+"Class Definitions"!
+
+JSFunction subclass: #JSNamedFunction
+	instanceVariableNames: 'name'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+"Loose Methods"!
+
+!JSFunction methodsFor!
+
+addExpression: aString
+
+	self add: (JSStream on: aString)!
+
+named: aString
+
+	"Convert the receiver to a named function"
+
+	^JSNamedFunction named: aString function: self!
+
+returnExpression: aString
+
+	self returnStatement: (JSStream on: aString)!
+
+returnStatement: anObject
+
+	"Must be sent after all other statements have been added"
+
+	self 
+		return: true;
+		add: anObject! !
+
+!JSFunction categoriesForMethods!
+addExpression:!public! !
+named:!converting!public! !
+returnExpression:!public! !
+returnStatement:!public! !
+!
+
+!JSFunction class methodsFor!
+
+named: aString
+
+	^self named: aString arguments: #()!
+
+named: aString arguments: anArray
+
+	^JSNamedFunction new
+		name: aString;
+		arguments: anArray;
+		yourself! !
+
+!JSFunction class categoriesForMethods!
+named:!instance creation!public! !
+named:arguments:!instance creation!public! !
+!
+
+!JSScript methodsFor!
+
+fetch: aUrl then: thenString values: aCollection method: aString
+
+	| jsStream |
+
+	jsStream := JSStream new.
+	jsStream nextPutAll: 'fetch('; javascript: aUrl.
+	aCollection isEmpty ifFalse: [jsStream nextPutAll: '+"="+'; javascript: aCollection; nextPutAll: '.toString()'].
+	jsStream nextPutAll: ', {method: "'; nextPutAll: aString; nextPutAll: '" })'.
+	thenString isNil ifFalse: [jsStream nextPutAll: '.then'; nextPutAll: thenString].
+
+	self add: jsStream!
+
+fetchCallback: aBlock then: thenString values: aCollection method: aString
+	self 
+		fetch: (self renderContext actionUrl withField: (self renderContext callbacks store: (WAActionCallback on: aBlock))) 
+		then: thenString
+		values: aCollection
+		method: aString!
+
+fetchCallback: aBlock value: anObject method: aString
+	self fetchCallback: aBlock values: {anObject} method: aString!
+
+fetchCallback: aBlock values: aCollection method: aString
+	self 
+		fetch: (self renderContext actionUrl withField: (self renderContext callbacks store: (WAActionCallback on: aBlock))) 
+		then: nil
+		values: aCollection
+		method: aString! !
+
+!JSScript categoriesForMethods!
+fetch:then:values:method:!convenience!public! !
+fetchCallback:then:values:method:!convenience!public! !
+fetchCallback:value:method:!convenience!public! !
+fetchCallback:values:method:!convenience!public! !
+!
+
+"End of package definition"!
+

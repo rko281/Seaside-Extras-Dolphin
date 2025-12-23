@@ -1,0 +1,206 @@
+﻿| package |
+package := Package name: 'Bootstrap5-Extras'.
+package paxVersion: 1;
+	basicComment: ''.
+
+package methodNames
+	add: #SBSHtmlCanvas -> #columnUnits:;
+	add: #SBSHtmlCanvas -> #columnUnits:size:;
+	add: #SBSLayoutColumnTag -> #units:;
+	add: #SBSLayoutColumnTag -> #units:size:;
+	add: #SBSLinkButtonTag -> #beOutline;
+	add: #WATagBrush -> #alignItemsCenter;
+	add: #WATagBrush -> #class:magnitude:;
+	add: #WATagBrush -> #class:size:;
+	add: #WATagBrush -> #class:size:magnitude:;
+	add: #WATagBrush -> #flexGrow:;
+	add: #WATagBrush -> #flexGrow:size:;
+	add: #WATagBrush -> #gutter:;
+	add: #WATagBrush -> #gutter:size:;
+	add: #WATagBrush -> #gutterX:;
+	add: #WATagBrush -> #gutterX:size:;
+	add: #WATagBrush -> #gutterY:;
+	add: #WATagBrush -> #gutterY:size:;
+	add: #WATagBrush -> #marginEnd:;
+	add: #WATagBrush -> #marginStart:;
+	yourself.
+
+package binaryGlobalNames: (Set new
+	yourself).
+
+package globalAliases: (Set new
+	yourself).
+
+package setPrerequisites: #(
+	'..\Seaside-Bootstrap5\Bootstrap5-Core'
+	'..\Core\Object Arts\Dolphin\Base\Dolphin'
+	'..\Seaside\Seaside\Seaside-Canvas'
+	'Seaside-Extras').
+
+package setManualPrerequisites: #(
+	'Seaside-Extras').
+
+package!
+
+"Loose Methods"!
+
+!SBSHtmlCanvas methodsFor!
+
+columnUnits: anInteger	
+	"Convenience for creating and configuring Bootstrap columns in a single message"	^self columnUnits: anInteger size: nil!
+
+columnUnits: anInteger size: aString	
+	"Convenience for creating and configuring Bootstrap columns in a single message"	^self column 
+		units: anInteger size: aString;
+		yourself! !
+
+!SBSHtmlCanvas categoriesForMethods!
+columnUnits:!layout!public! !
+columnUnits:size:!layout!public! !
+!
+
+!SBSLayoutColumnTag methodsFor!
+
+units: anInteger	self units: anInteger size: nil!
+
+units: anInteger size: aString	self class: 'col%' size: aString magnitude: anInteger! !
+
+!SBSLayoutColumnTag categoriesForMethods!
+units:!public!sizes! !
+units:size:!public!sizes! !
+!
+
+!SBSLinkButtonTag methodsFor!
+
+beOutline
+
+	self modifier: 'outline'! !
+
+!SBSLinkButtonTag categoriesForMethods!
+beOutline!options!public! !
+!
+
+!WATagBrush methodsFor!
+
+alignItemsCenter
+
+	self class: 'align-items-center'!
+
+class: aString magnitude: anInteger
+
+	"Private - Utility for setting classes of the form 'gx-2'
+	In this case aString would be 'gx' (note the '-' tag is omitted)"
+
+	| out |
+
+	out := WriteStream on: (String new: 16).
+
+	out 
+		nextPutAll: aString;
+		nextPut: $-;
+		display: anInteger.
+
+	self class: out contents!
+
+class: aString size: responsiveTag
+
+	"Private - Utility for setting classes of the form 'flex-md-grow-1'
+	aString should contain % where the responsive tag is to inserted, e.g. 'flex%grow' (note the '-' either size of the tag are omitted).
+	For clarity responsiveTag can either be a Bootstrap string value (one of 'xs' 'sm' 'md' 'lg' 'xl' 'xxl') or a descriptive Symbol (#extraSmall #small #medium #large #extraLarge #extraExtraLarge)"
+
+	^self class: aString size: responsiveTag magnitude: nil!
+
+class: aString size: responsiveTag magnitude: anInteger
+
+	"Private - Utility for setting classes of the form 'flex-md-grow-1'
+	aString should contain % where the responsive tag is to inserted, e.g. 'flex%grow' (note the '-' either size of the tag are omitted).
+	For clarity responsiveTag can either be a Bootstrap string value (one of 'xs' 'sm' 'md' 'lg' 'xl' 'xxl') or a descriptive Symbol (#extraSmall #small #medium #large #extraLarge #extraExtraLarge) and may also be nil.
+	anInteger will be appended preceeded by '-'. May be nil if no numeric size is specified"
+
+	| in out |
+
+	in := aString readStream.
+	out := WriteStream on: (String new: 16).
+
+	out nextPutAll: (in upTo: $%).
+	(in atEnd not or: [aString last = $%]) ifTrue: 
+		[responsiveTag isNil ifFalse: 
+			[out 
+				nextPut: $-; 
+				nextPutAll: 
+					(##(IdentityDictionary new
+						at: #extraSmall put: 'xs';
+						at: #small put: 'sm';
+						at: #medium put: 'md';
+						at: #large put: 'lg';
+						at: #extraLarge put: 'xl';
+						at: #extraExtraLarge put: 'xxl';
+						yourself) at: responsiveTag ifAbsent: [responsiveTag])].
+		in atEnd ifFalse: 
+			[out	
+				nextPut: $-;
+				nextPutAll: in upToEnd]].
+
+	anInteger isNil ifFalse: [out nextPut: $-; print: anInteger].
+
+	self class: out contents!
+
+flexGrow: aNumber
+
+	self flexGrow: aNumber size: nil!
+
+flexGrow: aNumber size: aString
+
+	self class: 'flex%grow' size: aString magnitude: aNumber!
+
+gutter: aNumber
+
+	self gutter: aNumber size: nil!
+
+gutter: aNumber size: aString
+
+	self class: 'g' size: aString magnitude: aNumber!
+
+gutterX: aNumber
+
+	self gutterX: aNumber size: nil!
+
+gutterX: aNumber size: aString
+
+	self class: 'gx' size: aString magnitude: aNumber!
+
+gutterY: aNumber
+
+	self gutterY: aNumber size: nil!
+
+gutterY: aNumber size: aString
+
+	self class: 'gy' size: aString magnitude: aNumber!
+
+marginEnd: aNumber
+
+	self class: 'me-', aNumber asString!
+
+marginStart: aNumber
+
+	self class: 'ms-', aNumber asString! !
+
+!WATagBrush categoriesForMethods!
+alignItemsCenter!*Bootstrap5/Core!public! !
+class:magnitude:!*Bootstrap5/Core!private! !
+class:size:!*Bootstrap5/Core!private! !
+class:size:magnitude:!*Bootstrap5/Core!private! !
+flexGrow:!*Bootstrap5/Core!public! !
+flexGrow:size:!*Bootstrap5/Core!public! !
+gutter:!*Bootstrap5/Core!public! !
+gutter:size:!*Bootstrap5/Core!public! !
+gutterX:!*Bootstrap5/Core!public! !
+gutterX:size:!*Bootstrap5/Core!public! !
+gutterY:!*Bootstrap5/Core!public! !
+gutterY:size:!*Bootstrap5/Core!public! !
+marginEnd:!*Bootstrap5/Core!public! !
+marginStart:!*Bootstrap5/Core!public! !
+!
+
+"End of package definition"!
+
