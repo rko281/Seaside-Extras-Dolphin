@@ -4,6 +4,7 @@ package paxVersion: 1;
 	basicComment: ''.
 
 package classNames
+	add: #JSJavascriptNamedFunctionDefinitionBrush;
 	add: #JSNamedFunction;
 	yourself.
 
@@ -12,6 +13,7 @@ package methodNames
 	add: #JSFunction -> #named:;
 	add: #JSFunction -> #returnExpression:;
 	add: #JSFunction -> #returnStatement:;
+	add: #JSJavascriptCanvas -> #defineNamedFunction;
 	add: #JSScript -> #fetch:then:values:method:;
 	add: #JSScript -> #fetchCallback:then:values:method:;
 	add: #JSScript -> #fetchCallback:value:method:;
@@ -40,6 +42,12 @@ package!
 "Class Definitions"!
 
 JSFunction subclass: #JSNamedFunction
+	instanceVariableNames: 'name'
+	classVariableNames: ''
+	poolDictionaries: ''
+	classInstanceVariableNames: ''!
+
+JSJavascriptFunctionDefinitionBrush subclass: #JSJavascriptNamedFunctionDefinitionBrush
 	instanceVariableNames: 'name'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -94,6 +102,15 @@ named: aString arguments: anArray
 !JSFunction class categoriesForMethods!
 named:!instance creation!public! !
 named:arguments:!instance creation!public! !
+!
+
+!JSJavascriptCanvas methodsFor!
+
+defineNamedFunction
+	^ self brush: (JSJavascriptNamedFunctionDefinitionBrush new)! !
+
+!JSJavascriptCanvas categoriesForMethods!
+defineNamedFunction!public! !
 !
 
 !JSScript methodsFor!

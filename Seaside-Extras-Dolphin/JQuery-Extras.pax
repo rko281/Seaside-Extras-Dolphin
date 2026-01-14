@@ -3,12 +3,7 @@ package := Package name: 'JQuery-Extras'.
 package paxVersion: 1;
 	basicComment: ''.
 
-package classNames
-	add: #JQueryBootstrapTable;
-	yourself.
-
 package methodNames
-	add: #JQueryClass -> #bootstrapTable:;
 	add: #JQueryInstance -> #as:;
 	add: #JQueryInstance -> #newCopy;
 	add: #JQueryInstance -> #resetDecoration;
@@ -22,8 +17,6 @@ package globalAliases: (Set new
 	yourself).
 
 package setPrerequisites: #(
-	'..\Core\Object Arts\Dolphin\Base\Dolphin'
-	'..\Seaside\Javascript\Javascript-Core'
 	'Javascript-Extras'
 	'..\Seaside\JQuery\JQuery-Core').
 
@@ -32,25 +25,7 @@ package setManualPrerequisites: #(
 
 package!
 
-"Class Definitions"!
-
-JQueryInstance subclass: #JQueryBootstrapTable
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	classInstanceVariableNames: ''!
-
 "Loose Methods"!
-
-!JQueryClass methodsFor!
-
-bootstrapTable: aString
-
-	^(self id: aString) as: JQueryBootstrapTable! !
-
-!JQueryClass categoriesForMethods!
-bootstrapTable:!convenience!public! !
-!
 
 !JQueryInstance methodsFor!
 

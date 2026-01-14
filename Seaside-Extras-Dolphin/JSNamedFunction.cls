@@ -14,10 +14,24 @@ JSNamedFunction comment: ''!
 
 !JSNamedFunction methodsFor!
 
-javascriptContentOn: aStream	aStream 
-		nextPutAll: 'function ';
-		nextPutAll: self name;
-		nextPut: $(.	self arguments do: [ :each | aStream nextPutAll: each ] separatedBy: [ aStream nextPut: $, ].	aStream nextPutAll: '){'.	statements isEmpty ifFalse:			[ statements allButLast do:					[ :each | 					aStream						javascript: each;						nextPut: $; ].			self return ifTrue: [ aStream nextPutAll: 'return ' ].			aStream javascript: statements last ].	aStream nextPut: $}!
+javascriptContentOn: aRenderer
+	aRenderer defineNamedFunction 
+		name: self name; 
+		arguments: self arguments;
+		with:
+		[ statements isEmpty ifFalse:
+			[self return 
+			ifTrue:
+				[ statements allButLast do:
+					[ :each | 
+					aRenderer render: each.
+					aRenderer document separator].
+					aRenderer return: statements last ]
+			ifFalse: 
+				[ statements do:
+					[ :each | 
+					aRenderer render: each.
+					aRenderer document separator] ]]]!
 
 name
 	^name!
