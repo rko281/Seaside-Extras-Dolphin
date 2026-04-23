@@ -4,6 +4,10 @@ package paxVersion: 1;
 	basicComment: ''.
 
 package methodNames
+	add: #SBSButtonTag -> #beOutline;
+	add: #SBSButtonTag -> #beOutlineIf:;
+	add: #SBSHtmlCanvas -> #bootstrapButton;
+	add: #SBSHtmlCanvas -> #bootstrapButton:;
 	add: #SBSHtmlCanvas -> #columnUnits:;
 	add: #SBSHtmlCanvas -> #columnUnits:size:;
 	add: #SBSLayoutColumnTag -> #units:;
@@ -21,6 +25,7 @@ package methodNames
 	add: #WATagBrush -> #gutterX:size:;
 	add: #WATagBrush -> #gutterY:;
 	add: #WATagBrush -> #gutterY:size:;
+	add: #WATagBrush -> #justifyContentBetween;
 	add: #WATagBrush -> #marginEnd:;
 	add: #WATagBrush -> #marginStart:;
 	yourself.
@@ -44,7 +49,29 @@ package!
 
 "Loose Methods"!
 
+!SBSButtonTag methodsFor!
+
+beOutline
+
+	self beOutlineIf: true!
+
+beOutlineIf: aBlock	"Creates an outline type button if aBlock is true."	self class: self contextStyle, self modifierString, '-outline' if: aBlock value! !
+
+!SBSButtonTag categoriesForMethods!
+beOutline!public!sizes! !
+beOutlineIf:!options!public! !
+!
+
 !SBSHtmlCanvas methodsFor!
+
+bootstrapButton
+
+	^ self brush: SBSButtonTag new!
+
+bootstrapButton: aBlock
+
+	^self bootstrapButton
+		with: aBlock!
 
 columnUnits: anInteger	
 	"Convenience for creating and configuring Bootstrap columns in a single message"	^self columnUnits: anInteger size: nil!
@@ -55,6 +82,8 @@ columnUnits: anInteger size: aString
 		yourself! !
 
 !SBSHtmlCanvas categoriesForMethods!
+bootstrapButton!buttons!public! !
+bootstrapButton:!buttons!public! !
 columnUnits:!layout!public! !
 columnUnits:size:!layout!public! !
 !
@@ -177,6 +206,10 @@ gutterY: aNumber size: aString
 
 	self class: 'gy' size: aString magnitude: aNumber!
 
+justifyContentBetween
+
+	self class: 'justify-content-between'!
+
 marginEnd: aNumber
 
 	self class: 'me-', aNumber asString!
@@ -198,6 +231,7 @@ gutterX:!*Bootstrap5/Core!public! !
 gutterX:size:!*Bootstrap5/Core!public! !
 gutterY:!*Bootstrap5/Core!public! !
 gutterY:size:!*Bootstrap5/Core!public! !
+justifyContentBetween!*Bootstrap5/Core!public! !
 marginEnd:!*Bootstrap5/Core!public! !
 marginStart:!*Bootstrap5/Core!public! !
 !
